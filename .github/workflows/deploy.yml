@@ -48,15 +48,18 @@ jobs:
         id: process-deployment-configuration
         shell: pwsh
         run: |
-          # Make dynamic
-          $environmentsToTarget = @(
-            @{
-              name = 'sbx'
-            }
-            @{
-              name = 'dev'
-            }
-          ) | ConvertTo-Json -Compress
+          switch (${{ inputs.env }}) {
+              'sbx' { $environmentsToTarget = $continuousDeployment ? @('sbx', 'dev', 'int', 'prd') : @('sbx') }
+              'dev' { $environmentsToTarget = $continuousDeployment ? @('dev', 'int', 'prd') : @('dev') }
+              'int' { $environmentsToTarget = $continuousDeployment ? @( 'int', 'prd') : @('int') }
+              'prd' { $environmentsToTarget = @('sbx') }
+          }
+
+          $environmentsToTarget | ForEach-Object {
+              @{
+                  name = $_
+              }
+          } | ConvertTo-Json -Compression None
 
           if($environmentsToTarget -notmatch "\[.*\]") {
             $environmentsToTarget = "[$environmentsToTarget]"
