@@ -44,6 +44,7 @@ jobs:
         id: process-deployment-configuration
         shell: pwsh
         run: |
+          $continuousDeployment = [System.Convert]::ToBoolean('${{ inputs.continuousDeployment }}')
           switch ('${{ inputs.env }}') {
               'sbx' { $environmentsToTarget = $continuousDeployment ? @('sbx', 'dev', 'int', 'prd') : @('sbx') }
               'dev' { $environmentsToTarget = $continuousDeployment ? @('dev', 'int', 'prd') : @('dev') }
