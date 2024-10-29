@@ -11,6 +11,9 @@ Mandatory. The path to the template file.
 .PARAMETER TemplateParameterFilePath
 Mandatory. The path to the template parameters file.
 
+.PARAMETER Environment
+Mandatory. The environment to deploy to. Is used in the deployment name.
+
 .PARAMETER MetadataLocation
 Optional. The location to store the top-level deployment metadata in.
 
@@ -32,6 +35,9 @@ function New-TemplateDeployment {
         [Parameter(Mandatory)]
         [string] $TemplateParameterFilePath,
 
+        [Parameter(Mandatory)]
+        [string] $Environment,
+
         [Parameter(Mandatory = $false)]
         [switch] $WhatIf,
 
@@ -44,7 +50,7 @@ function New-TemplateDeployment {
         TemplateParameterFile = $TemplateParameterFilePath
         Location              = $MetadataLocation
         Verbose               = $true
-        DeploymentName        = "{0}-{1}" -f (Split-Path (Split-Path $TemplateFilePath -Parent) -Leaf), (-join (Get-Date -Format 'yyyyMMddTHHMM')[0..63])
+        DeploymentName        = "{0}-{1}-{2}" -f $Environment, (Split-Path (Split-Path $TemplateFilePath -Parent) -Leaf), (-join (Get-Date -Format 'yyyyMMddTHHMM')[0..63])
     }
 
     if ($WhatIf) {

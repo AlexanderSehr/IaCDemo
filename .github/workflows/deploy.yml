@@ -105,8 +105,9 @@ jobs:
           . (Join-Path $env:GITHUB_WORKSPACE '.github' 'scripts' 'New-TemplateDeployment.ps1')
 
           $functionInput = @{
-            TemplateFilePath           = Join-Path $env:GITHUB_WORKSPACE 'solutions' '${{ inputs.workload }}' 'main.bicep'
-            TemplateParameterFilePath  = Join-Path $env:GITHUB_WORKSPACE 'solutions' '${{ inputs.workload }}' 'environmentParameters' '${{ inputs.env }}.bicepparam'
+            Environment =             '${{ inputs.env }}'
+            TemplateFilePath          = Join-Path $env:GITHUB_WORKSPACE 'solutions' '${{ inputs.workload }}' 'main.bicep'
+            TemplateParameterFilePath = Join-Path $env:GITHUB_WORKSPACE 'solutions' '${{ inputs.workload }}' 'environmentParameters' '${{ inputs.env }}.bicepparam'
           }
 
           if(-not (Test-Path $functionInput.TemplateParameterFilePath)) {
