@@ -109,6 +109,11 @@ jobs:
             TemplateParameterFilePath  = Join-Path $env:GITHUB_WORKSPACE 'solutions' '${{ inputs.workload }}' 'environmentParameters' '${{ inputs.env }}.bicepparam'
           }
 
+          if(-not (Test-Path $functionInput.TemplateParameterFilePath)) {
+            Write-Warning ('No parameters file found at path [{0}]. Skipping deployment.' -f $functionInput.TemplateParameterFilePath)
+            return
+          }
+
           if(${{ inputs.whatIf }}) {
             $functionInput.WhatIf = $true
           }
