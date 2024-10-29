@@ -61,7 +61,7 @@ jobs:
             $environmentsToTarget = "[$environmentsToTarget]"
           }
           Write-Verbose "Publishing output: $environmentsToTarget" -Verbose
-          Write-Output ('{0}={1}' -f 'environmentsToTarget', $environmentsToTarget) >> $env:GITHUB_OUTPUT_PATH
+          Write-Output ('{0}={1}' -f 'environmentsToTarget', $environmentsToTarget) >> $env:GITHUB_OUTPUT
     outputs:
       environmentsToTarget: ${{ steps.process-deployment-configuration.outputs.environmentsToTarget }}
 
