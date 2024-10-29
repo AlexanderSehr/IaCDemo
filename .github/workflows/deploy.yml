@@ -49,7 +49,7 @@ jobs:
               'sbx' { $environmentsToTarget = $continuousDeployment ? @('sbx', 'dev', 'int', 'prd') : @('sbx') }
               'dev' { $environmentsToTarget = $continuousDeployment ? @('dev', 'int', 'prd') : @('dev') }
               'int' { $environmentsToTarget = $continuousDeployment ? @( 'int', 'prd') : @('int') }
-              'prd' { $environmentsToTarget = @('sbx') }
+              'prd' { $environmentsToTarget = @('prd') }
           }
 
           $environmentsToTarget | ForEach-Object {
