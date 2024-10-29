@@ -29,7 +29,7 @@ function Install-CustomModule {
     )
 
     # Remove exsisting module in session
-    if (Get-Module $Module -ErrorAction SilentlyContinue) {
+    if (Get-Module $Module -ErrorAction 'SilentlyContinue') {
         try {
             Remove-Module $Module -Force
         } catch {
@@ -101,63 +101,11 @@ function Set-EnvironmentOnAgent {
         )
     )
 
-    ###########################
-    ##   Install Azure CLI   ##
-    ###########################
-
-    # AzCLI is pre-installed on GitHub hosted runners.
-    # https://github.com/actions/virtual-environments#available-environments
-
-    az --version
-    <#
-    Write-Verbose ("Install azure cli start") -Verbose
-    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-    Write-Verbose ("Install azure cli end") -Verbose
-    #>
-
-    ##############################
-    ##   Install Bicep for CLI   #
-    ##############################
-
-    # Bicep CLI is pre-installed on GitHub hosted runners.
-    # https://github.com/actions/virtual-environments#available-environments
+    ###############
+    ##   Bicep   ##
+    ###############
 
     bicep --version
-    <#
-    Write-Verbose ("Install bicep start") -Verbose
-    # Fetch the latest Bicep CLI binary
-    curl -Lo bicep 'https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64'
-
-    # Mark it as executable
-    chmod +x ./bicep
-
-    # Add bicep to your PATH (requires admin)
-    sudo mv ./bicep /usr/local/bin/bicep
-    Write-Verbose ("Install bicep end") -Verbose
-    #>
-
-    ###############################
-    ##   Install Extensions CLI   #
-    ###############################
-
-    # Azure CLI extension for DevOps is pre-installed on GitHub hosted runners.
-    # https://github.com/actions/virtual-environments#available-environments
-
-    az extension list | ConvertFrom-Json | Select-Object -Property name, version, preview, experimental
-
-    <#
-    Write-Verbose ('Install cli exentions start') -Verbose
-    $Extensions = @(
-        'azure-devops'
-    )
-    foreach ($extension in $Extensions) {
-        if ((az extension list-available -o json | ConvertFrom-Json).Name -notcontains $extension) {
-            Write-Verbose "Adding CLI extension '$extension'" -Verbose
-            az extension add --name $extension
-        }
-    }
-    Write-Verbose ('Install cli exentions end') -Verbose
-    #>
 
     ####################################
     ##   Install PowerShell Modules   ##
