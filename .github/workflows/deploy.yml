@@ -55,7 +55,7 @@ jobs:
               @{
                   name = $_
               }
-          } | ConvertTo-Json -Compression None
+          } | ConvertTo-Json -Compress 
 
           if($environmentsToTarget -notmatch "\[.*\]") {
             $environmentsToTarget = "[$environmentsToTarget]"
