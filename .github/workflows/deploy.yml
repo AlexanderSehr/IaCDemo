@@ -11,7 +11,7 @@ on:
           - Sparrow
           - Thunderdome
       env:
-        description: 'The environment to target'
+        description: 'Target environment'
         required: false
         default: sbx
         type: choice
@@ -21,12 +21,12 @@ on:
           - int
           - prd
       continuousDeployment:
-        description: 'Deploy continuously throught the environments'
+        description: 'Perform a continuous deployment'
         required: false
         type: boolean
         default: true
       whatIf:
-        description: 'Run the deployment in what-if mode'
+        description: 'Run in what-if mode'
         required: false
         type: boolean
         default: false
