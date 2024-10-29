@@ -98,16 +98,16 @@ jobs:
           tenant-id: ${{ secrets.ARM_TENANT_ID }}
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID}}
           enable-AzPSSession: true
-      - name: 'Deploy workload [${{ inputs.workload }}] to environment [${{ inputs.env }}]'
+      - name: 'Deploy workload [${{ inputs.workload }}] to environment [${{ matrix.environments.name }}]'
         shell: pwsh
         run: |
           # Load used functions
           . (Join-Path $env:GITHUB_WORKSPACE '.github' 'scripts' 'New-TemplateDeployment.ps1')
 
           $functionInput = @{
-            Environment =             '${{ inputs.env }}'
+            Environment =             '${{ matrix.environments.name }}'
             TemplateFilePath          = Join-Path $env:GITHUB_WORKSPACE 'solutions' '${{ inputs.workload }}' 'main.bicep'
-            TemplateParameterFilePath = Join-Path $env:GITHUB_WORKSPACE 'solutions' '${{ inputs.workload }}' 'environmentParameters' '${{ inputs.env }}.bicepparam'
+            TemplateParameterFilePath = Join-Path $env:GITHUB_WORKSPACE 'solutions' '${{ inputs.workload }}' 'environmentParameters' '${{ matrix.environments.name }}.bicepparam'
           }
 
           if(-not (Test-Path $functionInput.TemplateParameterFilePath)) {
