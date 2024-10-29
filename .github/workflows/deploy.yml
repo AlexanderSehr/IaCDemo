@@ -60,7 +60,7 @@ jobs:
           if($environmentsToTarget -notmatch "\[.*\]") {
             $environmentsToTarget = "[$environmentsToTarget]"
           }
-
+          Write-Verbose "Publishing output: $environmentsToTarget" -Verbose
           Write-Output ('{0}={1}' -f 'environmentsToTarget', $environmentsToTarget) >> $env:GITHUB_OUTPUT_PATH
     outputs:
       environmentsToTarget: ${{ steps.process-deployment-configuration.outputs.environmentsToTarget }}
