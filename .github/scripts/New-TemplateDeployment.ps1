@@ -32,7 +32,7 @@ function New-TemplateDeployment {
         [Parameter(Mandatory)]
         [string] $TemplateParameterFilePath,
 
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $false)]
         [switch] $WhatIf,
 
         [Parameter(Mandatory = $false)]
