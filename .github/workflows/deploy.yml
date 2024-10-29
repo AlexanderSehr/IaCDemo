@@ -31,8 +31,9 @@ on:
         type: boolean
         default: false
 
-env:
-  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   job_initialize_pipeline:
