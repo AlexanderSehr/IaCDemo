@@ -47,8 +47,21 @@ jobs:
         id: process-deployment-configuration
         shell: pwsh
         run: |
-          $environmentsToTarget = @('sbx','dev') # TODO: Make dynamic
-          Write-Output ('{0}={1}' -f 'environmentsToTarget', ($environmentsToTarget | ConvertTo-Json -Compress)) >> $env:GITHUB_OUTPUT
+          # Make dynamic
+          $environmentsToTarget = @(
+            @{
+              name = 'sbx'
+            }
+            @{
+              name = 'dev'
+            }
+          ) | ConvertTo-Json -Compress
+
+          if($environmentsToTarget -notmatch "\[.*\]") {
+            $environmentsToTarget = "[$environmentsToTarget]"
+          }
+
+          Write-Output ('{0}={1}' -f 'environmentsToTarget', $environmentsToTarget) >> $env:GITHUB_OUTPUT_PATH
     outputs:
       environmentsToTarget: ${{ steps.process-deployment-configuration.outputs.environmentsToTarget }}
 
