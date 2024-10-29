@@ -44,7 +44,7 @@ function New-TemplateDeployment {
         TemplateParameterFile = $TemplateParameterFilePath
         Location              = $MetadataLocation
         Verbose               = $true
-        DeploymentName        = "{0}-{1}" -f (Split-Path $TemplateFilePath -Parent), ( -join (Get-Date -Format 'yyyyMMddTHHMM')[0..63])
+        DeploymentName        = "{0}-{1}" -f (Split-Path (Split-Path $TemplateFilePath -Parent) -Leaf), (-join (Get-Date -Format 'yyyyMMddTHHMM')[0..63])
     }
 
     if ($WhatIf) {
