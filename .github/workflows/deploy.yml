@@ -115,8 +115,8 @@ jobs:
             return
           }
 
-          if(${{ inputs.whatIf }}) {
-            $functionInput.WhatIf = $true
+          if([System.Convert]::ToBoolean('${{ inputs.whatIf }}')) {
+            $functionInput['WhatIf'] = $true
           }
 
           Write-Verbose "Invoke task with" -Verbose
