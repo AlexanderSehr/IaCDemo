@@ -1,0 +1,83 @@
+name: 'Deploy workload(s)'
+
+on:
+  workflow_dispatch:
+    inputs:
+      workload:
+        description: 'The workload to deploy'
+        required: true
+        type: choice
+        options:
+          - Sparrow
+          - Thunderdome
+      env:
+        description: 'The environment to target'
+        required: false
+        default: sbx
+        type: choice
+        options:
+          - sbx
+          - dev
+          - int
+          - prd
+      continuousDeployment:
+        description: 'Deploy continuously throught the environments'
+        required: false
+        type: boolean
+        default: true
+      whatIf:
+        description: 'Run the deployment in what-if mode'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+jobs:
+  job_deploy_environment:
+    runs-on: ubuntu-20.04
+    name: 'Deploy environment'
+    # strategy:
+    #   fail-fast: false
+    #   matrix:
+    #     environments: ['parameters.json']
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: 'Setup agent'
+        shell: pwsh
+        run: |
+          # Load used functions
+          . (Join-Path $env:GITHUB_WORKSPACE '.github' 'scripts' 'Set-EnvironmentOnAgent.ps1')
+
+          # Set agent up
+          Set-EnvironmentOnAgent
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ env.AZURE_CREDENTIALS }}
+          enable-AzPSSession: true
+      - name: 'Deploy workload [${{ inputs.workload }}] to environment [${{ inputs.env }}]'
+        shell: pwsh
+        run: |
+          # Load used functions
+          . (Join-Path $env:GITHUB_WORKSPACE '.github' 'scripts' 'New-TemplateDeployment.ps1')
+
+          $functionInput = @{
+            TemplateFilePath           = Join-Path $env:GITHUB_WORKSPACE 'solutions' ${{ inputs.workload }} 'main.bicep'
+            TemplateParameterFilePath  = Join-Path $env:GITHUB_WORKSPACE 'solutions' ${{ inputs.workload }} 'environmentParameters' '${{ inputs.env }}.bicepparam'
+          }
+
+          if(${{ inputs.whatIf }}) {
+            $functionInput.WhatIf = $true
+          }
+
+          Write-Verbose "Invoke task with" -Verbose
+          Write-Verbose ($functionInput | ConvertTo-Json | Out-String) -Verbose
+
+          # Invoke deployment
+          New-TemplateDeployment @functionInput -Verbose
+
