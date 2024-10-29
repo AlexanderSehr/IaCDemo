@@ -35,13 +35,32 @@ env:
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
 jobs:
-  job_deploy_environment:
+  job_initialize_pipeline:
+    runs-on: ubuntu-latest
+    name: "Initialize pipeline"
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 'Process deployment configuration'
+        id: process-deployment-configuration
+        shell: pwsh
+        run: |
+          $environmentsToTarget = @('sbx','dev') # TODO: Make dynamic
+          Write-Output ('{0}={1}' -f 'environmentsToTarget', ($environmentsToTarget | ConvertTo-Json -Compress)) >> $env:GITHUB_OUTPUT
+    outputs:
+      environmentsToTarget: ${{ steps.process-deployment-configuration.outputs.environmentsToTarget }}
+
+  job_deploy_to_environment:
     runs-on: ubuntu-20.04
-    name: 'Deploy environment'
-    # strategy:
-    #   fail-fast: false
-    #   matrix:
-    #     environments: ['parameters.json']
+    name: 'Deploy to environment'
+    needs:
+      - job_initialize_pipeline
+    strategy:
+      fail-fast: false
+      matrix:
+        environments: ${{ needs.job_initialize_pipeline.outputs.environmentsToTarget }}
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2
@@ -55,10 +74,12 @@ jobs:
 
           # Set agent up
           Set-EnvironmentOnAgent
-      - name: Azure Login
-        uses: Azure/login@v1
+      - name: "Azure Login - Default"
+        uses: azure/login@v2
         with:
-          creds: ${{ env.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_SUBSCRIPTION_ID}}
+          subscription-id: ${{ secrets.ARM_TENANT_ID }}
           enable-AzPSSession: true
       - name: 'Deploy workload [${{ inputs.workload }}] to environment [${{ inputs.env }}]'
         shell: pwsh
