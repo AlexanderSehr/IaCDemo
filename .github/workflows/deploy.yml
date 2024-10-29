@@ -44,7 +44,7 @@ jobs:
         id: process-deployment-configuration
         shell: pwsh
         run: |
-          switch (${{ inputs.env }}) {
+          switch ('${{ inputs.env }}') {
               'sbx' { $environmentsToTarget = $continuousDeployment ? @('sbx', 'dev', 'int', 'prd') : @('sbx') }
               'dev' { $environmentsToTarget = $continuousDeployment ? @('dev', 'int', 'prd') : @('dev') }
               'int' { $environmentsToTarget = $continuousDeployment ? @( 'int', 'prd') : @('int') }
@@ -104,8 +104,8 @@ jobs:
           . (Join-Path $env:GITHUB_WORKSPACE '.github' 'scripts' 'New-TemplateDeployment.ps1')
 
           $functionInput = @{
-            TemplateFilePath           = Join-Path $env:GITHUB_WORKSPACE 'solutions' ${{ inputs.workload }} 'main.bicep'
-            TemplateParameterFilePath  = Join-Path $env:GITHUB_WORKSPACE 'solutions' ${{ inputs.workload }} 'environmentParameters' '${{ inputs.env }}.bicepparam'
+            TemplateFilePath           = Join-Path $env:GITHUB_WORKSPACE 'solutions' '${{ inputs.workload }}' 'main.bicep'
+            TemplateParameterFilePath  = Join-Path $env:GITHUB_WORKSPACE 'solutions' '${{ inputs.workload }}' 'environmentParameters' '${{ inputs.env }}.bicepparam'
           }
 
           if(${{ inputs.whatIf }}) {
