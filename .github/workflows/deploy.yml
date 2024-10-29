@@ -73,7 +73,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        environments: ${{ needs.job_initialize_pipeline.outputs.environmentsToTarget }}
+        environments:  ${{ fromJson(needs.job_initialize_pipeline.outputs.environmentsToTarget) }}
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2
