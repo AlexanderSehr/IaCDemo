@@ -67,7 +67,7 @@ jobs:
 
   job_deploy_to_environment:
     runs-on: ubuntu-20.04
-    name: 'Deploy to environment'
+    name: "Deploy to environment [${{ matrix.environments.name }}]"
     needs:
       - job_initialize_pipeline
     strategy:
