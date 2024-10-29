@@ -52,7 +52,7 @@ jobs:
               'prd' { $environmentsToTarget = @('prd') }
           }
 
-          $environmentsToTarget | ForEach-Object {
+          $environmentsToTarget = $environmentsToTarget | ForEach-Object {
               @{
                   name = $_
               }
