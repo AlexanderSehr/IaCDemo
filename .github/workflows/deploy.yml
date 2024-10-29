@@ -31,10 +31,6 @@ on:
         type: boolean
         default: false
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   job_initialize_pipeline:
     runs-on: ubuntu-latest
@@ -70,8 +66,11 @@ jobs:
       environmentsToTarget: ${{ steps.process-deployment-configuration.outputs.environmentsToTarget }}
 
   job_deploy_to_environment:
-    runs-on: ubuntu-20.04
     name: "Deploy to environment [${{ matrix.environments.name }}]"
+    permissions:
+      id-token: write # For OIDC
+    environment: ${{ matrix.environments.name }} # For OIDC
+    runs-on: ubuntu-20.04
     needs:
       - job_initialize_pipeline
     strategy:
@@ -80,7 +79,7 @@ jobs:
         environments:  ${{ fromJson(needs.job_initialize_pipeline.outputs.environmentsToTarget) }}
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: 'Setup agent'
