@@ -56,6 +56,7 @@ module keyVault '../../modules/key-vault/vault/main.bicep' = {
   params: {
     name: keyVaultName
     location: location
+    enablePurgeProtection: false
     privateEndpoints: [
       {
         subnetResourceId: virtualNetwork.outputs.subnetResourceIds[1]
