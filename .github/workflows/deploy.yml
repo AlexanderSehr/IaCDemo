@@ -71,7 +71,7 @@ jobs:
     permissions:
       id-token: write # For OIDC
     environment: ${{ matrix.environments.name }} # For OIDC
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs:
       - job_initialize_pipeline
     strategy:
