@@ -20,7 +20,8 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   location: location
 }
 
-module networkSecurityGroup '../../modules/network/network-security-group/main.bicep' = {
+
+module networkSecurityGroup 'br/public:avm/res/network/network-security-group:0.5.1' = {
   scope: rg
   name: '${uniqueString(deployment().name, location)}-nsg-${networkSecurityGroupName}'
   params: {
@@ -29,7 +30,7 @@ module networkSecurityGroup '../../modules/network/network-security-group/main.b
   }
 }
 
-module virtualNetwork '../../modules/network/virtual-network/main.bicep' = {
+module virtualNetwork 'br/public:avm/res/network/virtual-network:0.6.1' = {
   scope: rg
   name: '${uniqueString(deployment().name, location)}-vnet-${virtualNetworkName}'
   params: {
@@ -50,13 +51,13 @@ module virtualNetwork '../../modules/network/virtual-network/main.bicep' = {
   }
 }
 
-module keyVault '../../modules/key-vault/vault/main.bicep' = {
+module keyVault 'br/public:avm/res/key-vault/vault:0.12.1' = {
   scope: rg
   name: '${uniqueString(deployment().name, location)}-kvlt-${keyVaultName}'
   params: {
     name: keyVaultName
     location: location
-    enablePurgeProtection: false // For test reasons
+    enablePurgeProtection: false
     privateEndpoints: [
       {
         subnetResourceId: virtualNetwork.outputs.subnetResourceIds[1]
@@ -64,3 +65,4 @@ module keyVault '../../modules/key-vault/vault/main.bicep' = {
     ]
   }
 }
+
