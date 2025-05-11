@@ -30,21 +30,19 @@ module managedIdentity 'br/public:avm/res/managed-identity/user-assigned-identit
   }
 }
 
-// MSI RG contributor assignment
-resource contributorRole 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
-  name: 'b24988ac-6180-42a0-ab88-20f7382dd24c' // Contributor
-  scope: tenant()
-}
+module rgIdem 'br/public:avm/res/resources/resource-group:0.4.1' = {
+  params: {
+    name: rg.name
+    roleAssignments: [
+      {
+        principalId: managedIdentity.outputs.principalId
+        roleDefinitionIdOrName: 'Contributor'
+        principalType: 'ServicePrincipal'
 
-resource imageMSI_rg_rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(rg.id, msiName, contributorRole.id)
-  properties: {
-    principalId: managedIdentity.outputs.principalId
-    roleDefinitionId: contributorRole.id
-    principalType: 'ServicePrincipal'
+      }
+    ]
   }
 }
-
 
 module computeGallery 'br/public:avm/res/compute/gallery:0.9.2' = {
   scope: rg
@@ -104,4 +102,7 @@ module triggerBuildDeploymentScript 'br/public:avm/res/resources/deployment-scri
     }
     scriptContent: imageTemplate.outputs.runThisCommand
   }
+  dependsOn: [
+    rgIdem
+  ]
 }
