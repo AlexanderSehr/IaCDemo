@@ -53,6 +53,7 @@ module computeGallery 'br/public:avm/res/compute/gallery:0.9.2' = {
     images: [
       {
         name: 'myImage'
+        hyperVGeneration: 'V2'
         identifier: {
           publisher: 'devops'
           offer: 'devops_linux'
