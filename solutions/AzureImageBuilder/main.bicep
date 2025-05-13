@@ -9,6 +9,9 @@ param location string = deployment().location
 @description('The name of the Compute Gallery to deploy.')
 param galleryName string
 
+@description('The name of the image definition in the Compute Gallery.')
+param computeGalleryImageDefinitionName string = 'myImage'
+
 @description('The name of the managed identity to deploy.')
 param msiName string
 
@@ -107,4 +110,35 @@ module triggerBuildDeploymentScript 'br/public:avm/res/resources/deployment-scri
   dependsOn: [
     imageMSI_rg_rbac
   ]
+}
+
+
+// Alternative using the pattern module
+
+module aib 'br/public:avm/ptn/virtual-machine-images/azure-image-builder:0.1.6' = {
+  params: {
+    computeGalleryName: galleryName
+    
+    computeGalleryImageDefinitionName: computeGalleryImageDefinitionName
+    computeGalleryImageDefinitions: [
+      {
+        name: computeGalleryImageDefinitionName
+        hyperVGeneration: 'V2'
+        identifier: {
+          publisher: 'devops'
+          offer: 'devops_linux'
+          sku: 'devops_linux_az'
+        }
+        osState: 'Generalized'
+        osType: 'Linux'
+      }
+    ]
+    imageTemplateImageSource: {
+      type: 'PlatformImage'
+      publisher: 'canonical'
+      offer: '0001-com-ubuntu-server-jammy'
+      sku: '22_04-lts-gen2'
+      version: 'latest'
+    }
+  }
 }
