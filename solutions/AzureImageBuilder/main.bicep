@@ -21,7 +21,7 @@ param imageTemplateName string
 @description('The name of the deployment script to trigger the image build.')
 param triggerBuildDeploymentScriptName string
 
-resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+resource rg 'Microsoft.Resources/resourceGroups@2025-03-01' = {
   name: resourceGroupName
   location: location
 }
