@@ -21,8 +21,9 @@ param imageTemplateName string
 @description('The name of the deployment script to trigger the image build.')
 param triggerBuildDeploymentScriptName string
 
-resource rg 'Microsoft.Resources/resourceGroups@2025-03-01' existing = {
+resource rg 'Microsoft.Resources/resourceGroups@2025-03-01' = {
   name: resourceGroupName
+  location: location
 }
 
 module computeGallery 'br/public:avm/res/compute/gallery:0.9.2' = {
@@ -106,3 +107,30 @@ module deploymentScript 'br/public:avm/res/resources/deployment-script:0.5.1' = 
     scriptContent: imageTemplate.outputs.runThisCommand
   }
 }
+
+// AIB
+// module aib 'br/public:avm/ptn/virtual-machine-images/azure-image-builder:0.1.6' = {
+//   params: {
+//     computeGalleryImageDefinitionName: computeGalleryImageDefinitionName
+//     computeGalleryImageDefinitions: [
+//       {
+//         name: computeGalleryImageDefinitionName
+//         identifier: {
+//           publisher: 'devops'
+//           offer: 'devops_linux'
+//           sku: 'devops_linux_az'
+//         }
+//         osState: 'Generalized'
+//         osType: 'Linux'
+//       }
+//     ]
+//     computeGalleryName: computeGalleryName
+//     imageTemplateImageSource: {
+//       type: 'PlatformImage'
+//       publisher: 'canonical'
+//       offer: '0001-com-ubuntu-server-jammy'
+//       sku: '22_04-lts-gen2'
+//       version: 'latest'
+//     }
+//   }
+// }
