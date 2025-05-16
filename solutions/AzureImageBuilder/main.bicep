@@ -7,13 +7,13 @@ param resourceGroupName string
 param location string = deployment().location
 
 @description('The name of the Compute Gallery to deploy.')
-param galleryName string
+param computeGalleryName string
 
 @description('The name of the image definition in the Compute Gallery.')
 param computeGalleryImageDefinitionName string = 'myImage'
 
 @description('The name of the managed identity to deploy.')
-param msiName string
+param managedIdentityName string
 
 @description('The name of the image template to deploy. MUST be unique for each run.')
 param imageTemplateName string
@@ -29,7 +29,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 module managedIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.4.1' = {
   scope: rg
   params: {
-    name: msiName
+    name: managedIdentityName
   }
 }
 
@@ -40,7 +40,7 @@ resource contributorRole 'Microsoft.Authorization/roleDefinitions@2022-04-01' ex
 }
 
 resource imageMSI_rg_rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(rg.id, msiName, contributorRole.id)
+  name: guid(rg.id, managedIdentityName, contributorRole.id)
   properties: {
     principalId: managedIdentity.outputs.principalId
     roleDefinitionId: contributorRole.id
@@ -52,7 +52,7 @@ resource imageMSI_rg_rbac 'Microsoft.Authorization/roleAssignments@2022-04-01' =
 module computeGallery 'br/public:avm/res/compute/gallery:0.9.2' = {
   scope: rg
   params: {
-    name: galleryName
+    name: computeGalleryName
     images: [
       {
         name: 'myImage'
@@ -117,8 +117,7 @@ module triggerBuildDeploymentScript 'br/public:avm/res/resources/deployment-scri
 
 module aib 'br/public:avm/ptn/virtual-machine-images/azure-image-builder:0.1.6' = {
   params: {
-    computeGalleryName: galleryName
-    
+    computeGalleryName: computeGalleryName
     computeGalleryImageDefinitionName: computeGalleryImageDefinitionName
     computeGalleryImageDefinitions: [
       {
