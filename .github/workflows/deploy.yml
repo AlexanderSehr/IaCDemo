@@ -10,6 +10,7 @@ on:
         options:
           - Sparrow
           - Thunderdome
+          - Demo
       env:
         description: 'Target environment'
         required: false
