@@ -10,6 +10,7 @@ on:
         options:
           - Sparrow
           - Thunderdome
+          - AzureImageBuilder
           - Demo
       env:
         description: 'Target environment'
